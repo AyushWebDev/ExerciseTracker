@@ -1,5 +1,6 @@
 const express=require('express');
 const Exercise=require('../models/exerciseModel');
+const User=require("../models/userModel")
 const router=express.Router();
 
 router.get('/',(req,res)=>{
@@ -15,23 +16,37 @@ router.get('/',(req,res)=>{
 });
 
 router.get('/:id',(req,res)=>{
-    Exercise.findById(req.params.id)
-    .then(data=>{
-        res.json(data)
-    })
-    .catch(err=>{
-        res.status(400).json({
-            error: err
-        })
+    Exercise.find({postedby: req.params.id})
+    .populate("postedby","_id username")
+    .exec((err,exer)=>{
+        if(err){
+            return res.status(400).json({
+                error: err
+            })
+        }
+        res.json(exer);
+        console.log(exer);
+    
     });
 });
 
-router.post('/add',(req,res)=>{
-    const exer=new Exercise(req.body);
+router.post('/add/:userid',(req,res)=>{
+    let exer=new Exercise(req.body);
+    
+    // User.findById(req.params.userid)
+    // .then(user=>{
+    //     exer.postedby=user
+    // });
+
+    
+
     exer.save()
-    .then(()=>{
+    .then(exercise=>{
+       
+        
         res.json({
-            msg: "exercise added"
+            msg: "exercise added",
+            exercise
         })
     })
     .catch(err=>{
