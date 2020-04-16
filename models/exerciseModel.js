@@ -1,5 +1,6 @@
-const express=require('express');
+
 const mongoose=require('mongoose');
+const {ObjectId}=mongoose.Schema;
 
 const exerciseSchema=new mongoose.Schema({
     username:{ 
@@ -10,6 +11,10 @@ const exerciseSchema=new mongoose.Schema({
     },
     duration:{
         type: Number
+    },
+    postedby:{
+        type: ObjectId,
+        ref: "User"
     }
 });
 
